@@ -1,20 +1,17 @@
-name: Deploy to GitHub Pages
+# Pages is configured to publish main/ (legacy branch source). Its own Pages
+# build/deploy workflow publishes the committed dist/ directory automatically.
+# This workflow verifies that the committed bundle matches the source.
+name: Verify GitHub Pages bundle
 on:
   push:
+    branches: [main]
+  pull_request:
     branches: [main]
   workflow_dispatch:
 permissions:
   contents: read
-  pages: write
-  id-token: write
-concurrency:
-  group: pages
-  cancel-in-progress: true
 jobs:
-  deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+  verify:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -25,9 +22,7 @@ jobs:
       - run: npm ci
       - run: npm test
       - run: npm run build
-      - uses: actions/configure-pages@v5
-      - uses: actions/upload-pages-artifact@v3
-        with:
-          path: dist
-      - id: deployment
-        uses: actions/deploy-pages@v4
+      - name: Verify committed Pages files are up to date
+        run: |
+          git diff --exit-code -- dist
+          test -z "$(git ls-files --others --ignored --exclude-standard dist)"
