@@ -15,13 +15,13 @@ Open the address printed by Vite. Run checks with `npm test` and `npm run build`
 
 ## Deploy to GitHub Pages
 
-This is a static Vite project with no server-side dependency. `vite.config.js` serves local previews at `/` and sets the production build base path to `/sliding-window-protocol-simulator/` for this repository's GitHub Pages URL.
+This is a static Vite project with no server-side dependency. GitHub Pages is currently configured to serve the `main` branch at `/` (legacy source), so the compiled `dist/` site is committed and served at `/sliding-window-protocol-simulator/dist/`. The root page redirects visitors there. Local Vite previews still run at `/`.
 
-1. In repository **Settings → Pages**, choose **GitHub Actions** as the build/deployment source.
-2. Merge the project into `main`. The workflow in `.github/workflows/deploy.yml` runs tests, builds, and deploys on pushes to `main`. It can also be launched manually from the Actions tab.
-3. Visit `https://mayank17op.github.io/sliding-window-protocol-simulator/` after the deployment succeeds.
+1. Keep **Settings → Pages → Build and deployment → Deploy from a branch** set to `main` and `/ (root)`.
+2. After changing the app, run `npm ci && npm test && npm run build`, then commit **both** your source changes and the refreshed `dist/` files (`git add -f dist`). The verification workflow checks that committed output matches the source.
+3. Merge to `main`. GitHub's built-in `pages-build-deployment` workflow publishes the branch automatically. Visit `https://mayank17op.github.io/sliding-window-protocol-simulator/` after it succeeds.
 
-For a fork or renamed repository, change `base` in `vite.config.js` to `/<your-repository-name>/` before building. For root-domain Pages, use `/` instead.
+For a fork or renamed repository, change the production `base` in `vite.config.js` to `/<your-repository-name>/dist/` before building. For root-domain Pages, use `/dist/` instead.
 
 ## Model
 
